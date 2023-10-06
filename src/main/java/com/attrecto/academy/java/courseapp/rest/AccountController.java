@@ -16,6 +16,7 @@ import com.attrecto.academy.java.courseapp.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/account")
@@ -37,7 +38,7 @@ public class AccountController {
     @PostMapping(value= "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create a login token")
-	public String login(@RequestBody LoginDto loginDto) {
+	public String login(@RequestBody @Valid LoginDto loginDto) {
 		return accountService.generateJwtToken(loginDto);
 	}
 }

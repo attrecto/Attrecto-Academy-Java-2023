@@ -7,18 +7,15 @@ import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
 
 @Service
 public class AccountService {
-
-	//TODO: Teszt célból a valós JWT token helyett egyenlőre egy teszt Stringet adunk vissza
-	public String generateJwtToken(LoginDto loginDto) {
-		return "test";
+	public String generateJwtToken(final LoginDto loginDto) {
+		return "";
 	}
-
-	//TODO: Teszt célból a bejelentkezett felhasználó helyett egyenlőre egy fiktív felhasználót adunk vissza
+	
 	public MinimalUserDto getLoggedUser() {
 		MinimalUserDto minimalUserDto = new MinimalUserDto();
 		minimalUserDto.setId(1);
-		minimalUserDto.setName("user");
-		minimalUserDto.setEmail("usertestemail@attrecto.com");
+		minimalUserDto.setName("mockUser");
+		minimalUserDto.setEmail("mockUser@email.com");
 		return minimalUserDto;
 	}
 }

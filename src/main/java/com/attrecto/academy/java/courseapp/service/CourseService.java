@@ -1,75 +1,63 @@
 package com.attrecto.academy.java.courseapp.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.attrecto.academy.java.courseapp.mapper.CourseMapper;
+import com.attrecto.academy.java.courseapp.model.Course;
 import com.attrecto.academy.java.courseapp.model.dto.CourseDto;
 import com.attrecto.academy.java.courseapp.model.dto.CreateCourseDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
+import com.attrecto.academy.java.courseapp.persistence.CourseRepository;
+import com.attrecto.academy.java.courseapp.service.util.ServiceUtil;
 
 @Service
 public class CourseService {
+	private CourseRepository courseRepository;
+	private ServiceUtil serviceUtil;
 
-	private MinimalUserDto firstUser;
-	private MinimalUserDto secondUser;
-	private CourseDto firstCourse;
-	private CourseDto secondCourse;
-	
-	//TODO:Fiktív kurzusok és userek létrehozása
-	public CourseService() {
-		firstUser = new MinimalUserDto();
-		firstUser.setId(1);
-		firstUser.setName("firstUser");
-		firstUser.setEmail("firstUser@attrecto.com");
-		
-		firstCourse = new CourseDto();
-		firstCourse.setStudents(List.of(firstUser));
-
-		secondUser = new MinimalUserDto();
-		secondUser.setId(2);
-		secondUser.setName("secondUser");
-		secondUser.setEmail("secondUser@attrecto.com");
-		
-		secondCourse = new CourseDto();
-		secondCourse.setStudents(List.of(secondUser));
+	public CourseService(CourseRepository courseRepository, ServiceUtil serviceUtil) {
+		this.courseRepository = courseRepository;
+		this.serviceUtil = serviceUtil;
 	}
 
-	//TODO: Teszt célból a valós kurzusok helyett egyenlőre két fiktív kurzust adunk vissza
 	public List<CourseDto> listAllCourses() {
-		return List.of(firstCourse, secondCourse);
+		List<Course> courses = courseRepository.findAll();
+		return courses.stream().map(CourseMapper::map).collect(Collectors.toList());
 	}
 
-	//TODO: Teszt célból a valós kurzus helyett egyenlőre egy fiktív kurzust adunk vissza
-	public CourseDto getCourseById(Integer id) {
-		return firstCourse;
+	public CourseDto getCourseById(int id) {
+		return CourseMapper.map(serviceUtil.findCourseById(id));
 	}
 
-	//TODO: Teszt célból a valós kurzus helyett egyenlőre egy fiktív kurzust "hozunk létre" és térünk vele vissza
 	public CourseDto createCourse(CreateCourseDto createCourseDto) {
-		CourseDto newCourseDto = new CourseDto();
-		newCourseDto.setStudents(createCourseDto.getStudentIds().stream().map(id -> {
-			MinimalUserDto minimalUserDto = new MinimalUserDto();
-			minimalUserDto.setId(id);
-			minimalUserDto.setName("user" + id);
-			minimalUserDto.setEmail(String.format("user%semail@attrecto.com", id));
-			return minimalUserDto;
-		}).toList());
+		final Course course = new Course();
+		course.setTitle(createCourseDto.getTitle());
+		course.setDescription(createCourseDto.getDescription());
+		course.setUrl(createCourseDto.getUrl());
+		course.setAuthor(serviceUtil.findUserById(createCourseDto.getAuthorId()));
+		course.setStudents(createCourseDto.getStudentIds().stream().map(userId -> serviceUtil.findUserById(userId))
+				.collect(Collectors.toSet()));
 
-		return newCourseDto;
+		return CourseMapper.map(courseRepository.save(course));
 	}
 
-	//TODO: Teszt célból a valós kurzus helyett egyenlőre egy fiktív kurzust módosítunk és térünk vele vissza
-	public CourseDto updateCourse(Integer id, CreateCourseDto createCourseDto) {
-		CourseDto updatedCourseDto = new CourseDto();
-		updatedCourseDto.setStudents(List.of(firstUser, secondUser));
-		return updatedCourseDto;
+	public CourseDto updateCourse(final int id, CreateCourseDto updateCourseDto) {
+		Course course = serviceUtil.findCourseById(id);
+		course.setDescription(updateCourseDto.getDescription());
+		course.setTitle(updateCourseDto.getTitle());
+		course.setUrl(updateCourseDto.getUrl());
+		course.setAuthor(serviceUtil.findUserById(updateCourseDto.getAuthorId()));
+		course.setStudents(updateCourseDto.getStudentIds().stream().map(userId -> serviceUtil.findUserById(userId))
+				.collect(Collectors.toSet()));
+
+		return CourseMapper.map(courseRepository.save(course));
 	}
 
-	//TODO: Teszt célból a valós kurzus törlése helyett nem csinálunk egyenlőre semmit
-	public void deleteCourse(Integer id) {
+	public void deleteCourse(int id) {
+		serviceUtil.findCourseById(id);
+
+		courseRepository.deleteById(id);
 	}
 }
