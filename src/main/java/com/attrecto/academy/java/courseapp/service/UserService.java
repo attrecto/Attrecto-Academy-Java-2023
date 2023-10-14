@@ -40,6 +40,10 @@ public class UserService {
 		return UserMapper.map(serviceUtil.findUserById(id));
 	}
 
+	public List<UserDto> getUsersByName(final String name) {
+		return userRepository.findByNameContainingIgnoreCaseOrderByIdAscName(name).stream().map(UserMapper::map).toList();
+	}	
+	
 	public UserDto updateUser(int id, UpdateUserDto updateUserDto) {
 		Set<Course> courses = updateUserDto.getCourses().stream()
 				.map(courseId -> serviceUtil.findCourseById(courseId)).collect(Collectors.toSet());

@@ -10,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
-
-
 @Entity(name = "USERTABLE")
 public class User {
 	@Id
