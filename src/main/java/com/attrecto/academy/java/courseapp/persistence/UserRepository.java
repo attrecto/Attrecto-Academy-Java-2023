@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.attrecto.academy.java.courseapp.model.User;
-import com.attrecto.academy.java.courseapp.model.dto.UserDto;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 

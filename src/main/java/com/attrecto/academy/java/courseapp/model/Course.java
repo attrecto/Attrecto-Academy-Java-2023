@@ -1,5 +1,6 @@
 package com.attrecto.academy.java.courseapp.model;
 
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ public class Course {
 	private String url;
 	@ManyToOne
 	private User author;
+	private Date fromDate;
+	private Date untilDate;
 	@ManyToMany
 	@JoinTable(name = "COURSE_STUDENTS", joinColumns = @JoinColumn(name = "COURSE_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<User> students = new HashSet<>();
@@ -64,6 +67,22 @@ public class Course {
 
 	public void setAuthor(User author) {
 		this.author = author;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getUntilDate() {
+		return untilDate;
+	}
+
+	public void setUntilDate(Date untilDate) {
+		this.untilDate = untilDate;
 	}
 
 	public Set<User> getStudents() {

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.attrecto.academy.java.courseapp.mapper.UserMapper;
@@ -32,18 +33,22 @@ public class UserService {
 		this.serviceUtil = serviceUtil;
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public List<UserDto> listUsers() {
 		return userRepository.findAll().stream().map(UserMapper::map).collect(Collectors.toList());
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 	public UserDto getUserById(final int id) {
 		return UserMapper.map(serviceUtil.findUserById(id));
 	}
-
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")	
 	public List<UserDto> getUsersByName(final String name) {
 		return userRepository.findByNameContainingIgnoreCaseOrderByIdAscName(name).stream().map(UserMapper::map).toList();
 	}	
-	
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public UserDto updateUser(int id, UpdateUserDto updateUserDto) {
 		Set<Course> courses = updateUserDto.getCourses().stream()
 				.map(courseId -> serviceUtil.findCourseById(courseId)).collect(Collectors.toSet());
@@ -69,6 +74,7 @@ public class UserService {
 		return UserMapper.map(updatedUser);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public UserDto createUser(CreateUserDto createUserDto) {
 		User user = new User();
 		user.setName(createUserDto.getName());
@@ -81,6 +87,7 @@ public class UserService {
 		return UserMapper.map(user);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteUser(final int id) {
 		serviceUtil.findUserById(id);
 		

@@ -25,6 +25,8 @@ public class CourseMapper {
 		courseDto.setTitle(course.getTitle());
 		courseDto.setUrl(course.getUrl());
 		courseDto.setAuthorId(course.getAuthor().getId());
+		courseDto.setFromDate(course.getFromDate().toLocalDate());
+		courseDto.setUntilDate(course.getUntilDate().toLocalDate());
 		courseDto.setStudents(course.getStudents().stream().map(UserMapper::map).collect(Collectors.toSet()));
 		
 		return courseDto;
