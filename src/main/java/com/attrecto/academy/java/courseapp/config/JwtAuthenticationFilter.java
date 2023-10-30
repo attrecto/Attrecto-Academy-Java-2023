@@ -50,6 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		if(request.getMethod().equals("OPTIONS")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+		
 		final String authorizationHeaderValue = request.getHeader(HttpHeaders.AUTHORIZATION);
 
 		if (authorizationHeaderValue == null
@@ -74,6 +79,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} catch (InvalidJwtException | MalformedClaimException | NotFoundException ex) {
 			throw new RuntimeException(ex);
 		}
+		
+		response.addHeader("Access-Control-Allow-Methods:", "GET, OPTIONS, PUT, POST, DELETE");
+		
 		filterChain.doFilter(request, response);
 	}
 	
